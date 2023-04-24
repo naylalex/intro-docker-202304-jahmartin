@@ -1,0 +1,20 @@
+#Etapa de construccion se usa la imagen de maven para descargar depencias y construir proyecto  
+FROM maven:3.6.3-jdk-8 as build
+
+WORKDIR /app
+
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+COPY . .
+
+RUN mvn clean package -DskipTests
+
+#Etapa de produccion se ocupa la image de jdk la mas pequeña ya que en la etapa de construccion ya se genero el jar de ejecucion 
+FROM openjdk:8-jdk-alpine
+
+WORKDIR /app
+
+COPY --from=build /app/target/words.jar .
+
+CMD ["java", "-Xmx8m", "-Xms8m", "-jar", "words.jar"]

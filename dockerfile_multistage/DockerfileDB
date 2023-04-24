@@ -1,0 +1,9 @@
+# Etapa 1: Instalar Postgres en esta imagen no se puede hacer mucho ya que practicamente estamos usando la imagen mas pequeña oficial 
+FROM postgres AS base
+
+ENV POSTGRES_HOST_AUTH_METHOD=trust
+
+# Etapa 2: Inicializar la base de datos con el archivo SQL
+FROM base AS build
+
+COPY words.sql /docker-entrypoint-initdb.d/
