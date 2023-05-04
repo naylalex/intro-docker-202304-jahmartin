@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  db:
+    build: 
+      context: ./wordsmith/db
+      dockerfile:  DockerfileDB
+  web:
+    build: 
+      context: ./wordsmith/web
+      dockerfile: Dockerfile.go
+    
+  java:
+    build: 
+      context: ./wordsmith/words
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+  
+
+      
+
+  

@@ -1,0 +1,15 @@
+# Etapa de construcción, se ocupa la imagen de go para bajar y construir todo lo necesario para el proyecto go  
+FROM golang:latest AS build
+WORKDIR /go/src/app
+COPY . .
+# Si el archivo go.mod no existe, inicializa un nuevo módulo de Go esto para que tenga una base de referencia en las librerias 
+RUN go mod init app
+# Descarga solo los módulos necesarios para la ejecucion y compilacion 
+RUN go mod download 
+# Compila la aplicación y la coloca en el directorio /go/bin se habilita esta bandera para desactivar la libreria estandar de c y se pueda ejecutar en cualquier imagen alpine sin dependencias de librerias
+RUN CGO_ENABLED=0 go build -o /go/bin/app dispatcher.go
+
+# Etapa de producción
+FROM alpine:latest
+COPY --from=build /go/bin/app /app
+ENTRYPOINT ["/app"]
